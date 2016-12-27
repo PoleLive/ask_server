@@ -48,6 +48,7 @@ public class LoginController {
             return JsonUtil.getJSONString(-1, msg);
         }
 
+        map.put("msg","登录成功");
         map.put("user",user);
 
         return JsonUtil.getJSONString(0, map);
