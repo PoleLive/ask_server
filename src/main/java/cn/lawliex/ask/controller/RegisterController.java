@@ -42,9 +42,11 @@ public class RegisterController {
         user.setSalt(UUID.randomUUID().toString().substring(0,5));
         user.setHead_url(username);
         if(userService.addUser(user) > 0){
+            user = userService.getUser(username);
             String ticket  = userService.addTicket(user.getId());
             map.put("msg","注册成功");
             map.put("ticket",ticket);
+            map.put("data",user);
             return JsonUtil.getJSONString(0,map);
         }
         return JsonUtil.getJSONString(-1, "注册失败");
