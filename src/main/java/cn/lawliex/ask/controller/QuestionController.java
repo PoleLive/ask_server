@@ -44,6 +44,20 @@ public class QuestionController {
         return JsonUtil.getJSONString(0, map);
     }
 
+    @RequestMapping(path = {"/question/detail"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getQuestion(@RequestParam("id")int id){
+        Question question = questionService.getQuestion(id);
+        Map<String,Object> map = new HashMap<>();
+
+        if(question != null){
+            map.put("msg","success");
+            map.put("data",question);
+            return JsonUtil.getJSONString(0,map);
+        }
+        return JsonUtil.getJSONString(-1,"error");
+    }
+
     @RequestMapping(path = {"question/add"}, method = {RequestMethod.POST})
     @ResponseBody
     public String addQuestion(@RequestParam("title")String title,

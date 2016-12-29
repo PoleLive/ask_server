@@ -32,6 +32,7 @@ public interface QuestionDAO {
     @Update({"update ", TABLE_NAME, " set title=#{title} where id=#{id}"})
     void updateTitle(Question question);
 
-    @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"limit #{offset},#{limit}"})
+
+    @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id limit #{offset},#{limit}"})
     List<Question> selectQuestions(@Param("offset") int offset,@Param("limit") int limit);
 }
