@@ -2,10 +2,7 @@ package cn.lawliex.ask.dao;
 
 import cn.lawliex.ask.model.LoginTicket;
 import cn.lawliex.ask.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 /**
  * Created by Terence on 2016/12/28.
@@ -30,5 +27,5 @@ public interface LoginTicketDAO {
     LoginTicket selectByUserId(int userId);
 
     @Update({"update ", TABLE_NAME, " set status=#{status} where id=#{id}"})
-    void updateStatus(int id, int status);
+    void updateStatus(@Param("id") int id,@Param("status")  int status);
 }

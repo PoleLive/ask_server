@@ -20,11 +20,18 @@ public interface CommentDAO {
             "#{content}, #{userId}, #{entityId}, #{createdDate}, #{entityType},#{status})"})
     int addComment(Comment comment);
 
-    @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
+    @Select({"select c.*, q.title question_title, u.name author from comment c " +
+            "left join question q on q.id = c.entity_id and entity_type = 1 left " +
+            "join user u on c.user_id = u.id where c.id=#{id}"})
     Comment selectById(int id);
 
-    @Select({"select", SELECT_FIELDS, "from", TABLE_NAME, "where entity_id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
+    @Select({"select c.*, q.title question_title, u.name author from comment c " +
+            "left join question q on q.id = c.entity_id and entity_type = #{entityType} left " +
+            "join user u on c.user_id = u.id where entity_Id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
     List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
+
+//    @Select({"select", SELECT_FIELDS, "from", TABLE_NAME, "where entity_id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
+//    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
 
     @Select({"select", SELECT_FIELDS, "from",TABLE_NAME,"where user_id=#{userId}"})
     List<Comment> selectByUserId(int userId);

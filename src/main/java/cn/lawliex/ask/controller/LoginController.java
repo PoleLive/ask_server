@@ -70,5 +70,11 @@ public class LoginController {
 //        }
 //        return JsonUtil.getJSONString(-1,"还没有登录");
     }
-
+    @RequestMapping(path = {"/logout"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String logout(@RequestParam("ticket") String ticket){
+        LoginTicket loginTicket = userService.getLoginTicket(ticket);
+        userService.logout(loginTicket);
+        return JsonUtil.getJSONString(0, "success");
+    }
 }
