@@ -68,6 +68,7 @@ public class QuestionController {
         Question question = new Question();
         question.setUserId(userId);
         question.setTitle(title);
+        question.setLikeCount(0);
         question.setContent(content);
         question.setCreatedDate(new Date());
         question.setCommentCount(0);

@@ -13,11 +13,11 @@ import java.util.List;
 @Mapper
 public interface QuestionDAO {
     String TABLE_NAME = " question ";
-    String INSERT_FIELDS = " title, content, user_id, created_date, comment_count ";
+    String INSERT_FIELDS = " title, content, user_id, created_date, comment_count, like_count ";
     String SELECT_FIELDS = " id," + INSERT_FIELDS;
 
     @Insert({"insert into",TABLE_NAME,"(",INSERT_FIELDS,") values(" +
-            "#{title}, #{content}, #{userId}, #{createdDate}, #{commentCount})"})
+            "#{title}, #{content}, #{userId}, #{createdDate}, #{commentCount},#{likeCount})"})
     int addQuestion(Question question);
 
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
@@ -32,6 +32,11 @@ public interface QuestionDAO {
     @Update({"update ", TABLE_NAME, " set title=#{title} where id=#{id}"})
     void updateTitle(Question question);
 
+    @Update({"update ",TABLE_NAME, " set like_count=#{likeCount} where id=#{id}"})
+    void updateLikeCount(Question question);
+
+    @Update({"update ",TABLE_NAME, " set comment_count=#{commentCount} where id=#{id}"})
+    void updateCommentCount(Question question);
 
     @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id order by id desc limit #{offset},#{limit}"})
     List<Question> selectQuestions(@Param("offset") int offset,@Param("limit") int limit);
