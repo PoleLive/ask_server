@@ -23,7 +23,7 @@ public interface QuestionDAO {
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
     Question selectById(int id);
 
-    @Select({"select", SELECT_FIELDS, "from",TABLE_NAME,"where user_id=#{userId}"})
+    @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id where q.user_id=#{userId} order by q.id desc"})
     List<Question> selectByUserId(int userId);
 
     @Update({"update ", TABLE_NAME, " set content=#{content} where id=#{id}"})

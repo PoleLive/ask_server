@@ -32,8 +32,8 @@ public interface CommentDAO {
 //    @Select({"select", SELECT_FIELDS, "from", TABLE_NAME, "where entity_id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
 //    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
 
-    @Select({"select", SELECT_FIELDS, "from",TABLE_NAME,"where user_id=#{userId}"})
-    List<Comment> selectByUserId(int userId);
+    @Select({"select", SELECT_FIELDS, "from",TABLE_NAME,"where user_id=#{userId} and entity_type=1"})
+    List<Comment> selectAnswerByUserId(int userId);
 
     @Update({"update ", TABLE_NAME, " set status=#{status} where id=#{id}"})
     void updateStatus(@Param("id")int id,@Param("status")int status );

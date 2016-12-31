@@ -30,6 +30,9 @@ public class CommentService {
         }
         return res;
     }
+    public List<Comment> getAnswerByUserId(int userId){
+        return commentDAO.selectAnswerByUserId(userId);
+    }
     public Comment getComment(int id){
         return commentDAO.selectById(id);
     }

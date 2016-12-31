@@ -43,23 +43,47 @@ public class CommentController {
     public String getAnswerList(@RequestParam("questionId")int questionId){
         Map<String, Object> map = new HashMap<>();
         List<Comment> comments = commentService.getQuestionAnswer(questionId);
-
-        map.put("comments",comments);
+        List<Answer> answers = new ArrayList<>();
+        for (Comment c : comments){
+            Answer answer = getAnswerById(c.getId());
+            answers.add(answer);
+        }
+        map.put("comments",answers);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
     }
+
+    @RequestMapping(path = {"/answer/ulist"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getAnswerListByUserId(@RequestParam("userId")int userId){
+        Map<String, Object> map = new HashMap<>();
+        List<Comment> comments = commentService.getAnswerByUserId(userId);
+        List<Answer> answers = new ArrayList<>();
+        for (Comment c : comments){
+            Answer answer = getAnswerById(c.getId());
+            answers.add(answer);
+        }
+        map.put("datas",answers);
+        map.put("msg","获取成功");
+        return JsonUtil.getJSONString(0, map);
+    }
+
     @RequestMapping(path = {"/comment/list"},method = {RequestMethod.POST})
     @ResponseBody
     public String getCommentList(@RequestParam("answerId")int answerId){
         Map<String, Object> map = new HashMap<>();
         List<Comment> comments = commentService.getAnswerComment(answerId);
+        for (Comment c : comments){
+            c.setLikeCount(getCommentLikeCount(c.getId()));
+        }
         map.put("comments",comments);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
     }
-    @RequestMapping(path = {"/answer/detail"},method = {RequestMethod.POST})
-    @ResponseBody
-    public String getAnswer(@RequestParam("id")int id){
+    public int getCommentLikeCount(int id){
+        return (int)likeService.getLikeCount(3,id);
+    }
+    public Answer getAnswerById(int id){
         Comment c = commentService.getComment(id);
         Answer answer = new Answer();
         answer.setId(c.getId());
@@ -69,11 +93,19 @@ public class CommentController {
         answer.setStatus(c.getStatus());
         answer.setContent(c.getContent());
         answer.setAuthor(c.getAuthor());
+        answer.setCreatedDate(c.getCreatedDate());
         answer.setQuestionTitle(c.getQuestionTitle());
 
         answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
 
         answer.setCommentCount(commentService.countByEntityId(2,answer.getId()));
+        return  answer;
+    }
+
+    @RequestMapping(path = {"/answer/detail"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getAnswer(@RequestParam("id")int id){
+        Answer answer = getAnswerById(id);
         Map<String,Object> map = new HashMap<>();
         if(answer != null){
             map.put("msg","success");

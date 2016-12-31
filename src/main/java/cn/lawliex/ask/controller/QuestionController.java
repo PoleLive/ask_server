@@ -38,7 +38,17 @@ public class QuestionController {
     @ResponseBody
     public String getQuestionList(){
         Map<String, Object> map = new HashMap<>();
-        List<Question> questions = questionService.getQuestions(0, 20);
+        List<Question> questions = questionService.getQuestions(0, 10);
+        map.put("questions",questions);
+        map.put("msg","获取成功");
+        return JsonUtil.getJSONString(0, map);
+    }
+
+    @RequestMapping(path = {"/question/mylist"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getMyQuestionList(@RequestParam("userId") int userId){
+        Map<String, Object> map = new HashMap<>();
+        List<Question> questions = questionService.getQuestionsByUserId(userId);
         map.put("questions",questions);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
