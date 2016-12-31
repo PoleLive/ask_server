@@ -1,8 +1,11 @@
 package cn.lawliex.ask.controller;
 
+import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Question;
+import cn.lawliex.ask.model.User;
 import cn.lawliex.ask.service.CommentService;
+import cn.lawliex.ask.service.LikeService;
 import cn.lawliex.ask.service.QuestionService;
 import cn.lawliex.ask.service.UserService;
 import cn.lawliex.ask.util.JsonUtil;
@@ -15,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -34,25 +34,63 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    LikeService likeService;
+
+
     @RequestMapping(path = {"/answer/list"},method = {RequestMethod.POST})
     @ResponseBody
-    public String getCommentList(@RequestParam("questionId")int questionId){
+    public String getAnswerList(@RequestParam("questionId")int questionId){
         Map<String, Object> map = new HashMap<>();
-        List<Comment> comments = commentService.getQuestionAnswer(questionId, 0, 20);
+        List<Comment> comments = commentService.getQuestionAnswer(questionId);
+
         map.put("comments",comments);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
     }
-
+    @RequestMapping(path = {"/comment/list"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getCommentList(@RequestParam("answerId")int answerId){
+        Map<String, Object> map = new HashMap<>();
+        List<Comment> comments = commentService.getAnswerComment(answerId);
+        map.put("comments",comments);
+        map.put("msg","获取成功");
+        return JsonUtil.getJSONString(0, map);
+    }
     @RequestMapping(path = {"/answer/detail"},method = {RequestMethod.POST})
     @ResponseBody
     public String getAnswer(@RequestParam("id")int id){
-        Comment answer = commentService.getComment(id);
-        Map<String,Object> map = new HashMap<>();
+        Comment c = commentService.getComment(id);
+        Answer answer = new Answer();
+        answer.setId(c.getId());
+        answer.setUserId(c.getUserId());
+        answer.setEntityId(c.getEntityId());
+        answer.setEntityType(c.getEntityType());
+        answer.setStatus(c.getStatus());
+        answer.setContent(c.getContent());
+        answer.setAuthor(c.getAuthor());
+        answer.setQuestionTitle(c.getQuestionTitle());
 
+        answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
+
+        answer.setCommentCount(commentService.countByEntityId(2,answer.getId()));
+        Map<String,Object> map = new HashMap<>();
         if(answer != null){
             map.put("msg","success");
             map.put("data",answer);
+            return JsonUtil.getJSONString(0,map);
+        }
+        return JsonUtil.getJSONString(-1,"error");
+    }
+
+    @RequestMapping(path = {"/comment/detail"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getComment(@RequestParam("id")int id){
+        Comment c = commentService.getComment(id);
+        Map<String,Object> map = new HashMap<>();
+        if(c != null){
+            map.put("msg","success");
+            map.put("data",c);
             return JsonUtil.getJSONString(0,map);
         }
         return JsonUtil.getJSONString(-1,"error");
@@ -79,6 +117,27 @@ public class CommentController {
         map.put("msg","回答添加失败");
         return JsonUtil.getJSONString(-1, map);
     }
-
+    @RequestMapping(path = {"comment/add"}, method = {RequestMethod.POST})
+    @ResponseBody
+    public String addComment(@RequestParam("answerId")int answerId,
+                            @RequestParam("content")String content,
+                            @RequestParam("ticket")String ticket
+    ){
+        Map<String, Object> map = new HashMap<>();
+        Comment comment = new Comment();
+        User user  = userService.getUserByTicket(ticket);
+        comment.setUserId(user.getId());
+        comment.setEntityType(2);
+        comment.setContent(content);
+        comment.setCreatedDate(new Date());
+        comment.setEntityId(answerId);
+        comment.setStatus(0);
+        if(commentService.addComment(comment) > 0){
+            map.put("msg","回答添加成功");
+            return JsonUtil.getJSONString(0, map);
+        }
+        map.put("msg","回答添加失败");
+        return JsonUtil.getJSONString(-1, map);
+    }
 
 }

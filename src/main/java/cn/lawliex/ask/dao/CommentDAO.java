@@ -25,10 +25,9 @@ public interface CommentDAO {
             "join user u on c.user_id = u.id where c.id=#{id}"})
     Comment selectById(int id);
 
-    @Select({"select c.*, q.title question_title, u.name author from comment c " +
-            "left join question q on q.id = c.entity_id and entity_type = #{entityType} left " +
-            "join user u on c.user_id = u.id where entity_Id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
-    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
+    @Select({"select c.*, u.name author from comment c " +
+            "left join user u on c.user_id = u.id where entity_Id=#{entityId} and entity_type=#{entityType} order by id desc"})
+    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType);
 
 //    @Select({"select", SELECT_FIELDS, "from", TABLE_NAME, "where entity_id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
 //    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
@@ -42,4 +41,10 @@ public interface CommentDAO {
 
     @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id order by id desc limit #{offset},#{limit}"})
     List<Question> selectQuestions(@Param("offset") int offset, @Param("limit") int limit);
+
+    @Select({"select count(*) from comment where entity_type=1 and user_id=#{userId}"})
+    int countAnswerByUserId(int userId);
+
+    @Select({"select count(*) from comment where entity_type=#{entityType} and entity_id=#{entityId}"})
+    int countByEntityId(@Param("entityType")int entityType,@Param("entityId")int entityId);
 }

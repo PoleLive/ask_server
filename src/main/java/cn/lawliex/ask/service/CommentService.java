@@ -33,13 +33,23 @@ public class CommentService {
     public Comment getComment(int id){
         return commentDAO.selectById(id);
     }
-    public List<Comment> getQuestionAnswer(int questionId, int offset, int limit){
-        return commentDAO.selectByEntityId(questionId, 1, offset, limit);
+    public List<Comment> getAnswerComment(int answerId){
+        return commentDAO.selectByEntityId(answerId,2);
+    }
+    public List<Comment> getQuestionAnswer(int questionId){
+        return commentDAO.selectByEntityId(questionId, 1);
     }
     public List<Comment> getAnswerComment(int answerId, int offset, int limit){
-        return  commentDAO.selectByEntityId(answerId, 2, offset, limit);
+        return  commentDAO.selectByEntityId(answerId, 2);
     }
     void deleteComment(Comment comment){
         commentDAO.updateStatus(comment.getId(),1);
+    }
+
+    public int countByEntityId(int entityType, int entityId){
+        return commentDAO.countByEntityId(entityType,entityId);
+    }
+    public int countAnswerByUserId(int userId){
+        return commentDAO.countAnswerByUserId(userId);
     }
 }
