@@ -39,6 +39,9 @@ public class QuestionController {
     public String getQuestionList(){
         Map<String, Object> map = new HashMap<>();
         List<Question> questions = questionService.getQuestions(0, 10);
+        for(Question q:questions){
+            q.setHeadUrl(userService.getUser(q.getUserId()).getHeadUrl());
+        }
         map.put("questions",questions);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
@@ -49,6 +52,9 @@ public class QuestionController {
     public String getMyQuestionList(@RequestParam("userId") int userId){
         Map<String, Object> map = new HashMap<>();
         List<Question> questions = questionService.getQuestionsByUserId(userId);
+        for(Question q:questions){
+            q.setHeadUrl(userService.getUser(q.getUserId()).getHeadUrl());
+        }
         map.put("questions",questions);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);

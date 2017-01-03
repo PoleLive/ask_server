@@ -69,4 +69,7 @@ public class UserService {
         addLoginTicket(loginTicket);
         return ticket;
     }
+    public void updateHeadUrl(User user){
+        userDAO.updateHeadUrl(user);
+    }
 }

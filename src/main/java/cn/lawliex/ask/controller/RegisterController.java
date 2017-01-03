@@ -40,7 +40,7 @@ public class RegisterController {
         user.setName(username);
         user.setPassword(password);
         user.setSalt(UUID.randomUUID().toString().substring(0,5));
-        user.setHead_url(username);
+        user.setHeadUrl(username);
         if(userService.addUser(user) > 0){
             user = userService.getUser(username);
             String ticket  = userService.addTicket(user.getId());

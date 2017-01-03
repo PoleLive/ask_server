@@ -17,7 +17,15 @@ public class Answer {
     private String questionTitle;
     private int likeCount;
     private int commentCount;
+    private String headUrl;
 
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
 
     public int getLikeCount() {
         return likeCount;

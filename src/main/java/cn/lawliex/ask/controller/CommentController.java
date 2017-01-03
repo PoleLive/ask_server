@@ -95,7 +95,7 @@ public class CommentController {
         answer.setAuthor(c.getAuthor());
         answer.setCreatedDate(c.getCreatedDate());
         answer.setQuestionTitle(c.getQuestionTitle());
-
+        answer.setHeadUrl(c.getHeadUrl());
         answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
 
         answer.setCommentCount(commentService.countByEntityId(2,answer.getId()));

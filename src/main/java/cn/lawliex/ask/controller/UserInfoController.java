@@ -43,7 +43,7 @@ public class UserInfoController {
         UserInfo userInfo = new UserInfo();
         userInfo.setId(user.getId());
         userInfo.setName(user.getName());
-        userInfo.setHeadUrl(user.getHead_url());
+        userInfo.setHeadUrl(user.getHeadUrl());
         userInfo.setLikeCount((int)likeService.getLikeCount(0,user.getId()));
         userInfo.setFolloweeCount((int)followService.getFolloweeCount(user.getId(),0));
         userInfo.setFollowingCount((int)followService.getFollowerCount(0,user.getId()));

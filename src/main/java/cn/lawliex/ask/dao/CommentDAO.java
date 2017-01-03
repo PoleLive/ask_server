@@ -20,19 +20,19 @@ public interface CommentDAO {
             "#{content}, #{userId}, #{entityId}, #{createdDate}, #{entityType},#{status})"})
     int addComment(Comment comment);
 
-    @Select({"select c.*, q.title question_title, u.name author from comment c " +
+    @Select({"select c.*, q.title question_title, u.name author,head_url from comment c " +
             "left join question q on q.id = c.entity_id and entity_type = 1 left " +
             "join user u on c.user_id = u.id where c.id=#{id}"})
     Comment selectById(int id);
 
-    @Select({"select c.*, u.name author from comment c " +
+    @Select({"select c.*, u.name author,head_url from comment c " +
             "left join user u on c.user_id = u.id where entity_Id=#{entityId} and entity_type=#{entityType} order by id desc"})
     List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType);
 
 //    @Select({"select", SELECT_FIELDS, "from", TABLE_NAME, "where entity_id=#{entityId} and entity_type=#{entityType} order by id desc limit #{offset}, #{limit}"})
 //    List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType, @Param("offset") int offset, @Param("limit")int limit);
 
-    @Select({"select", SELECT_FIELDS, "from",TABLE_NAME,"where user_id=#{userId} and entity_type=1"})
+    @Select({"select c.*, head_url " , "from comment c left join user u on c.user_id = u.id where c.user_id=#{userId} and c.entity_type=1"})
     List<Comment> selectAnswerByUserId(int userId);
 
     @Update({"update ", TABLE_NAME, " set status=#{status} where id=#{id}"})
