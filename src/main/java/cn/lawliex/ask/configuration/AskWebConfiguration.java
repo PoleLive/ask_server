@@ -18,11 +18,11 @@ public class AskWebConfiguration extends WebMvcConfigurerAdapter{
     PassportInterceptor passportInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry){
-//        registry.addInterceptor(passportInterceptor)
-//                .addPathPatterns("/*")
-//                .addPathPatterns("/*/*");
-//
-//        logger.error("初始化中。。。。。。。。。。。。。");
+        registry.addInterceptor(passportInterceptor)
+                .addPathPatterns("/*")
+                .addPathPatterns("/*/*");
+
+        logger.error("初始化中。。。。。。。。。。。。。");
         super.addInterceptors(registry);
     }
 }

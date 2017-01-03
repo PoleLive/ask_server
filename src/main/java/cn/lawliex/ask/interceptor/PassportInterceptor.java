@@ -34,7 +34,7 @@ public class PassportInterceptor implements HandlerInterceptor {
         String ticket = request.getParameter("ticket");
         path = request.getServletPath();
         logger.info("pre:"+path);
-        if(path.equals("/login") || path.equals("/register") || path.equals("/user/head"))
+        if(path.equals("/login") || path.equals("/register") || path.contains("."))
             return true;
         if(ticket != null){
             User user = userService.getUserByTicket(ticket);
