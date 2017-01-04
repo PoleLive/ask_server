@@ -7,7 +7,10 @@ import cn.lawliex.ask.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Terence on 2016/12/27.
@@ -21,7 +24,19 @@ public class MessageService {
         return messageDAO.addMessage(message);
     }
 
-    public Message getMessage(int id){
-        return messageDAO.selectById(id);
+    public List<Message> getMessage(String conversationId){
+        return messageDAO.selectConversationId(conversationId);
+    }
+    public List<Message> getMessage(int userId){
+        List<Message> messages = new ArrayList<>();
+        Map<String,Boolean> map = new HashMap<>();
+        List<Message> list = messageDAO.selectByUserId(userId);
+        for(Message m : list){
+            if(map.get(m.getConversationId()) == null || map.get(m.getConversationId()) == false){
+                messages.add(m);
+                map.put(m.getConversationId(),true);
+            }
+        }
+        return messages;
     }
 }

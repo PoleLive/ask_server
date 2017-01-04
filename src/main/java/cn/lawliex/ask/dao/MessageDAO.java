@@ -24,8 +24,10 @@ public interface MessageDAO {
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
     Message selectById(int id);
 
-    @Select({"select * from", TABLE_NAME, "where conversation_id=#{conversationId} order by created_date desc limit #{offset}, #{limit}"})
-    List<Message> selectConversationId(@Param("conversationId") int conversationId, @Param("offset") int offset, @Param("limit") int limit);
+    @Select({"select m.*, u.name from_name, v.name to_name,u.head_url from_url, v.head_url to_url from message m left join user u on u.id = from_id left join user v on v.id = to_id where conversation_id=#{conversationId} order by created_date"})
+    List<Message> selectConversationId(@Param("conversationId") String conversationId);
 
+    @Select({"select m.*, u.name from_name, u.head_url from_url, v.name to_name, v.head_url to_url from message m left join user u on u.id = from_id left join user v on v.id = to_id where from_id = #{userId} or to_id = #{userId} order by created_date desc"})
+    List<Message> selectByUserId(int userId);
 
 }

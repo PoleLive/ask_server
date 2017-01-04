@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,15 +50,35 @@ public class MessageController {
         return  JsonUtil.getJSONString(-1,"error");
 
     }
-
-    @RequestMapping(path = {"/message/detail"},method = {RequestMethod.POST})
+    @RequestMapping(path = {"/message/list"})
     @ResponseBody
-    public String messageDetail(@RequestParam("id")int id){
-        Message message = messageService.getMessage(id);
+    public String messageList(@RequestParam("ticket")String ticket){
+        User user = userService.getUserByTicket(ticket);
+        List<Message> messages = messageService.getMessage(user.getId());
         Map<String, Object> map = new HashMap<>();
 
-        if(message!=null) {
-            map.put("data",message);
+        if(messages!=null) {
+            map.put("datas",messages);
+            map.put("msg", "success");
+            return JsonUtil.getJSONString(0, map);
+        }
+        return JsonUtil.getJSONString(-1, "error");
+    }
+    @RequestMapping(path = {"/message/detail"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String messageDetail(@RequestParam("id")int id,@RequestParam("ticket")String ticket){
+        User user = userService.getUserByTicket(ticket);
+        String conversationId = "";
+        if(id > user.getId())
+            conversationId += user.getId() + "_" + id;
+        else
+            conversationId += id + "_" + user.getId();
+
+        List<Message> messages = messageService.getMessage(conversationId);
+        Map<String, Object> map = new HashMap<>();
+
+        if(messages!=null) {
+            map.put("datas",messages);
             map.put("msg", "success");
             return JsonUtil.getJSONString(0, map);
         }

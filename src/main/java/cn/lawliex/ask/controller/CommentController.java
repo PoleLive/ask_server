@@ -37,7 +37,6 @@ public class CommentController {
     @Autowired
     LikeService likeService;
 
-
     @RequestMapping(path = {"/answer/list"},method = {RequestMethod.POST})
     @ResponseBody
     public String getAnswerList(@RequestParam("questionId")int questionId){

@@ -1,6 +1,7 @@
 package cn.lawliex.ask.controller;
 
 import cn.lawliex.ask.model.Comment;
+import cn.lawliex.ask.model.User;
 import cn.lawliex.ask.service.CommentService;
 import cn.lawliex.ask.service.FollowService;
 import cn.lawliex.ask.service.QuestionService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +34,19 @@ public class FollowController {
     @Autowired
     CommentService commentService;
 
+
     @RequestMapping(path = {"/follow/followers"},method = {RequestMethod.POST})
     @ResponseBody
     public String getFollowers(@RequestParam("entityType")int entityType, @RequestParam("entityId")int entityId){
         List<Integer> list = followService.getFollowers(entityType, entityId,0, 20);
+        List<User> users = new ArrayList<>();
         Map<String,Object> map = new HashMap<>();
-        map.put("list",list);
+
+        for(int i = 0; i < list.size();i++){
+            User user = userService.getUser(list.get(i));
+            users.add(user);
+        }
+        map.put("list",users);
         map.put("msg","success");
         return JsonUtil.getJSONString(0,map);
     }

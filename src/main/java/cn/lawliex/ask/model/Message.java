@@ -14,6 +14,42 @@ public class Message
     Date createdDate;
     int hasRead;
     String conversationId;
+    String fromName;
+    String toName;
+    String fromUrl;
+    String toUrl;
+
+    public String getFromUrl() {
+        return fromUrl;
+    }
+
+    public void setFromUrl(String fromUrl) {
+        this.fromUrl = fromUrl;
+    }
+
+    public String getToUrl() {
+        return toUrl;
+    }
+
+    public void setToUrl(String toUrl) {
+        this.toUrl = toUrl;
+    }
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName;
+    }
 
     public int getId() {
         return id;
