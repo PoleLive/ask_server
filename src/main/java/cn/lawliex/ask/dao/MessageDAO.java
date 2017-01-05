@@ -24,10 +24,15 @@ public interface MessageDAO {
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
     Message selectById(int id);
 
-    @Select({"select m.*, u.name from_name, v.name to_name,u.head_url from_url, v.head_url to_url from message m left join user u on u.id = from_id left join user v on v.id = to_id where conversation_id=#{conversationId} order by created_date"})
-    List<Message> selectConversationId(@Param("conversationId") String conversationId);
+    @Select({"select m.*, u.name from_name, v.name to_name,u.head_url from_url, v.head_url to_url from message m left join user u on u.id = from_id left join user v on v.id = to_id where has_read=0 and conversation_id=#{conversationId} and to_id = #{id} order by created_date"})
+    List<Message> selectConversationId(@Param("conversationId") String conversationId,@Param("id")int id);
 
     @Select({"select m.*, u.name from_name, u.head_url from_url, v.name to_name, v.head_url to_url from message m left join user u on u.id = from_id left join user v on v.id = to_id where from_id = #{userId} or to_id = #{userId} order by created_date desc"})
     List<Message> selectByUserId(int userId);
 
+    @Update({"update message set has_read = 1 where to_id = #{userId} and conversation_id = #{conversationId}"})
+    void updateMessageStatus(@Param("userId")int userId, @Param("conversationId")String conversatioinId);
+
+    @Select({"select count(*) from message where has_read = 0 and to_id = #{userId} and conversation_id = #{conversationId}"})
+    int getUnReadCount(@Param("userId")int userId, @Param("conversationId")String conversationId);
 }

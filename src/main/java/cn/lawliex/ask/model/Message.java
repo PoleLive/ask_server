@@ -18,6 +18,15 @@ public class Message
     String toName;
     String fromUrl;
     String toUrl;
+    int unReadCount;
+
+    public int getUnReadCount() {
+        return unReadCount;
+    }
+
+    public void setUnReadCount(int unReadCount) {
+        this.unReadCount = unReadCount;
+    }
 
     public String getFromUrl() {
         return fromUrl;

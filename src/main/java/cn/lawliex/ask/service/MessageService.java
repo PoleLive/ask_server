@@ -23,9 +23,11 @@ public class MessageService {
     public int addMessage(Message message){
         return messageDAO.addMessage(message);
     }
-
-    public List<Message> getMessage(String conversationId){
-        return messageDAO.selectConversationId(conversationId);
+    public Message getMessageById(int id){
+        return messageDAO.selectById(id);
+    }
+    public List<Message> getMessage(String conversationId,int id){
+        return messageDAO.selectConversationId(conversationId,id);
     }
     public List<Message> getMessage(int userId){
         List<Message> messages = new ArrayList<>();
@@ -38,5 +40,11 @@ public class MessageService {
             }
         }
         return messages;
+    }
+    public void updateHasRead(int userId, String conversationId){
+        messageDAO.updateMessageStatus(userId,conversationId);
+    }
+    public int getUnReadCount(int userId, String conversationId){
+        return messageDAO.getUnReadCount(userId,conversationId);
     }
 }

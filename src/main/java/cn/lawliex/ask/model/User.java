@@ -10,6 +10,7 @@ public class User {
     private String salt;
     private String headUrl;
 
+
     public int getId() {
         return id;
     }

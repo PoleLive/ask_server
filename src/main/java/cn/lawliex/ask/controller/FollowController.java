@@ -1,5 +1,8 @@
 package cn.lawliex.ask.controller;
 
+import cn.lawliex.ask.async.EventModel;
+import cn.lawliex.ask.async.EventProducer;
+import cn.lawliex.ask.async.EventType;
 import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Question;
@@ -36,6 +39,8 @@ public class FollowController {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    EventProducer eventProducer;
 
     @RequestMapping(path = {"/follow/followers"},method = {RequestMethod.POST})
     @ResponseBody
@@ -104,8 +109,17 @@ public class FollowController {
     @RequestMapping(path = {"/follow/follow"},method = {RequestMethod.POST})
     @ResponseBody
     public String follow(@RequestParam("entityType")int entityType, @RequestParam("entityId")int entityId, @RequestParam("ticket")String ticket){
-
-        if(followService.follow(userService.getUserByTicket(ticket).getId(),entityType,entityId)){
+        User user =userService.getUserByTicket(ticket) ;
+        if(followService.follow(user.getId(),entityType,entityId)){
+            if(entityType == 0) {
+                EventModel eventModel = new EventModel();
+                eventModel.setActorId(user.getId())
+                        .setEntityId(entityId)
+                        .setEntityType(entityType)
+                        .setEntityOwnerId(entityId)
+                        .setType(EventType.FOLLOW);
+                eventProducer.fireEvent(eventModel);
+            }
             return JsonUtil.getJSONString(0,"ok");
         }
         return JsonUtil.getJSONString(-1, "error");
@@ -135,6 +149,15 @@ public class FollowController {
         if(isFollower && followService.unfollow(userId,entityType,entityId)){
             return JsonUtil.getJSONString(0,"yes, but now no");
         }else if(!isFollower && followService.follow(userId,entityType,entityId)){
+            if(entityType == 0) {
+                EventModel eventModel = new EventModel();
+                eventModel.setActorId(userId)
+                        .setEntityId(entityId)
+                        .setEntityType(entityType)
+                        .setEntityOwnerId(entityId)
+                        .setType(EventType.FOLLOW);
+                eventProducer.fireEvent(eventModel);
+            }
             return JsonUtil.getJSONString(1, "no, but now yes");
         }
         return JsonUtil.getJSONString(-1,"error");

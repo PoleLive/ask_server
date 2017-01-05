@@ -42,10 +42,22 @@ public class MessageController {
             conversationId = fromId+"_"+toId;
         message.setConversationId(conversationId);
         message.setCreatedDate(new Date());
+
         message.setHasRead(0);
+        if(toId == fromId)
+            message.setHasRead(1);
+        message.setFromName(user.getName());
+        message.setFromUrl(user.getHeadUrl());
+        User toUser = userService.getUser(toId);
+        message.setToUrl(toUser.getHeadUrl());
+        message.setToName(toUser.getName());
         int res = messageService.addMessage(message);
+        Map<String,Object> map = new HashMap<>();
+
         if(res > 0){
-            return JsonUtil.getJSONString(0,"success");
+            map.put("data",message);
+            map.put("msg", "success");
+            return JsonUtil.getJSONString(0,map);
         }
         return  JsonUtil.getJSONString(-1,"error");
 
@@ -55,6 +67,9 @@ public class MessageController {
     public String messageList(@RequestParam("ticket")String ticket){
         User user = userService.getUserByTicket(ticket);
         List<Message> messages = messageService.getMessage(user.getId());
+        for(Message m : messages){
+            m.setUnReadCount(messageService.getUnReadCount(user.getId(),m.getConversationId()));
+        }
         Map<String, Object> map = new HashMap<>();
 
         if(messages!=null) {
@@ -74,12 +89,13 @@ public class MessageController {
         else
             conversationId += id + "_" + user.getId();
 
-        List<Message> messages = messageService.getMessage(conversationId);
+        List<Message> messages = messageService.getMessage(conversationId,user.getId());
         Map<String, Object> map = new HashMap<>();
 
         if(messages!=null) {
             map.put("datas",messages);
             map.put("msg", "success");
+            messageService.updateHasRead(user.getId(),conversationId);
             return JsonUtil.getJSONString(0, map);
         }
         return JsonUtil.getJSONString(-1, "error");
