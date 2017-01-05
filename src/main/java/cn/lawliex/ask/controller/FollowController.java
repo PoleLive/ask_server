@@ -1,6 +1,8 @@
 package cn.lawliex.ask.controller;
 
+import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
+import cn.lawliex.ask.model.Question;
 import cn.lawliex.ask.model.User;
 import cn.lawliex.ask.service.CommentService;
 import cn.lawliex.ask.service.FollowService;
@@ -50,6 +52,55 @@ public class FollowController {
         map.put("msg","success");
         return JsonUtil.getJSONString(0,map);
     }
+
+    @RequestMapping(path = {"/follow/followees"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getFollowees(@RequestParam("entityType")int entityType, @RequestParam("entityId")int entityId){
+        List<Integer> list = followService.getFollowees(entityId, entityType,0, 20);
+        List<User> users = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+
+        for(int i = 0; i < list.size();i++){
+            User user = userService.getUser(list.get(i));
+            users.add(user);
+        }
+        map.put("list",users);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0,map);
+    }
+
+    @RequestMapping(path = {"/follow/followquestion"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getFollowQuestions( @RequestParam("userId")int userId){
+        List<Integer> list = followService.getFollowees(userId, 1,0, 20);
+        List<Question> questions = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+
+        for(int i = 0; i < list.size();i++){
+            Question question = questionService.getQuestion(list.get(i));
+            questions.add(question);
+        }
+        map.put("datas",questions);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0,map);
+    }
+
+    @RequestMapping(path = {"/follow/answer"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getFollowAnswers( @RequestParam("userId")int userId){
+        List<Integer> list = followService.getFollowees(userId, 2,0, 20);
+        List<Answer> answers = new ArrayList<>();
+        Map<String,Object> map = new HashMap<>();
+
+        for(int i = 0; i < list.size();i++){
+            Answer answer = commentService.getAnswerById(list.get(i));
+            answers.add(answer);
+        }
+        map.put("datas",answers);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0,map);
+    }
+
     @RequestMapping(path = {"/follow/follow"},method = {RequestMethod.POST})
     @ResponseBody
     public String follow(@RequestParam("entityType")int entityType, @RequestParam("entityId")int entityId, @RequestParam("ticket")String ticket){

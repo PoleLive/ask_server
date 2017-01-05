@@ -37,7 +37,7 @@ public class QuestionService {
         questionDAO.updateTitle(question);
     }
     public List<Question> getQuestions(int offset, int limit){
-        return questionDAO.selectQuestions(offset,limit);
+        return questionDAO.selectQuestions();
     }
     public void updateLikeCount(Question question){
         questionDAO.updateLikeCount(question);

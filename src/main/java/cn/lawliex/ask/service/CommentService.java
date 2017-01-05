@@ -2,6 +2,7 @@ package cn.lawliex.ask.service;
 
 import cn.lawliex.ask.dao.CommentDAO;
 import cn.lawliex.ask.dao.QuestionDAO;
+import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Question;
 import org.apache.ibatis.annotations.Param;
@@ -17,6 +18,8 @@ import java.util.List;
 public class CommentService {
     @Autowired
     CommentDAO commentDAO;
+    @Autowired
+    LikeService likeService;
     @Autowired
     QuestionService questionService;
 
@@ -54,5 +57,23 @@ public class CommentService {
     }
     public int countAnswerByUserId(int userId){
         return commentDAO.countAnswerByUserId(userId);
+    }
+    public Answer getAnswerById(int id){
+        Comment c = getComment(id);
+        Answer answer = new Answer();
+        answer.setId(c.getId());
+        answer.setUserId(c.getUserId());
+        answer.setEntityId(c.getEntityId());
+        answer.setEntityType(c.getEntityType());
+        answer.setStatus(c.getStatus());
+        answer.setContent(c.getContent());
+        answer.setAuthor(c.getAuthor());
+        answer.setCreatedDate(c.getCreatedDate());
+        answer.setQuestionTitle(c.getQuestionTitle());
+        answer.setHeadUrl(c.getHeadUrl());
+        answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
+
+        answer.setCommentCount(countByEntityId(2,answer.getId()));
+        return  answer;
     }
 }

@@ -38,8 +38,8 @@ public interface QuestionDAO {
     @Update({"update ",TABLE_NAME, " set comment_count=#{commentCount} where id=#{id}"})
     void updateCommentCount(Question question);
 
-    @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id order by id desc limit #{offset},#{limit}"})
-    List<Question> selectQuestions(@Param("offset") int offset,@Param("limit") int limit);
+    @Select({"select q.*, name from",TABLE_NAME," q left join user u on q.user_id = u.id order by id desc"})
+    List<Question> selectQuestions();
 
     @Select({"select count(*) from", TABLE_NAME, "where user_id=#{userId}"})
     int countUserQuestion(int userId);
