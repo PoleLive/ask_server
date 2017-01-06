@@ -1,5 +1,8 @@
 package cn.lawliex.ask.controller;
 
+import cn.lawliex.ask.async.EventModel;
+import cn.lawliex.ask.async.EventProducer;
+import cn.lawliex.ask.async.EventType;
 import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Question;
@@ -37,6 +40,9 @@ public class CommentController {
     @Autowired
     LikeService likeService;
 
+    @Autowired
+    EventProducer eventProducer;
+
     @RequestMapping(path = {"/answer/list"},method = {RequestMethod.POST})
     @ResponseBody
     public String getAnswerList(@RequestParam("questionId")int questionId){
@@ -44,7 +50,7 @@ public class CommentController {
         List<Comment> comments = commentService.getQuestionAnswer(questionId);
         List<Answer> answers = new ArrayList<>();
         for (Comment c : comments){
-            Answer answer = getAnswerById(c.getId());
+            Answer answer = commentService.getAnswerById(c.getId());
             answers.add(answer);
         }
         map.put("comments",answers);
@@ -59,7 +65,7 @@ public class CommentController {
         List<Comment> comments = commentService.getAnswerByUserId(userId);
         List<Answer> answers = new ArrayList<>();
         for (Comment c : comments){
-            Answer answer = getAnswerById(c.getId());
+            Answer answer = commentService.getAnswerById(c.getId());
             answers.add(answer);
         }
         map.put("datas",answers);
@@ -82,29 +88,12 @@ public class CommentController {
     public int getCommentLikeCount(int id){
         return (int)likeService.getLikeCount(3,id);
     }
-    public Answer getAnswerById(int id){
-        Comment c = commentService.getComment(id);
-        Answer answer = new Answer();
-        answer.setId(c.getId());
-        answer.setUserId(c.getUserId());
-        answer.setEntityId(c.getEntityId());
-        answer.setEntityType(c.getEntityType());
-        answer.setStatus(c.getStatus());
-        answer.setContent(c.getContent());
-        answer.setAuthor(c.getAuthor());
-        answer.setCreatedDate(c.getCreatedDate());
-        answer.setQuestionTitle(c.getQuestionTitle());
-        answer.setHeadUrl(c.getHeadUrl());
-        answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
 
-        answer.setCommentCount(commentService.countByEntityId(2,answer.getId()));
-        return  answer;
-    }
 
     @RequestMapping(path = {"/answer/detail"},method = {RequestMethod.POST})
     @ResponseBody
     public String getAnswer(@RequestParam("id")int id){
-        Answer answer = getAnswerById(id);
+        Answer answer = commentService.getAnswerById(id);
         Map<String,Object> map = new HashMap<>();
         if(answer != null){
             map.put("msg","success");
@@ -143,6 +132,13 @@ public class CommentController {
         answer.setStatus(0);
         if(commentService.addComment(answer) > 0){
             map.put("msg","回答添加成功");
+            EventModel eventModel = new EventModel();
+            eventModel.setActorId(userId)
+                    .setEntityId(answer.getId())
+                    .setEntityType(2)
+                    .setEntityOwnerId(answer.getUserId())
+                    .setType(EventType.ANSWER);
+            eventProducer.fireEvent(eventModel);
             return JsonUtil.getJSONString(0, map);
         }
         map.put("msg","回答添加失败");

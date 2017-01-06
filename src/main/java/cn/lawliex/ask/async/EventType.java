@@ -7,7 +7,9 @@ public enum  EventType {
     LIKE(0),
     COMMENT(1),
     FOLLOW(2),
-    QUESTION(3);
+    QUESTION(3),
+    ANSWER(4);
+
     private int value;
     private EventType(int value){
         this.value = value;

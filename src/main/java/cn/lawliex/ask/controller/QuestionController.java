@@ -1,5 +1,8 @@
 package cn.lawliex.ask.controller;
 
+import cn.lawliex.ask.async.EventModel;
+import cn.lawliex.ask.async.EventProducer;
+import cn.lawliex.ask.async.EventType;
 import cn.lawliex.ask.model.Question;
 import cn.lawliex.ask.model.User;
 import cn.lawliex.ask.service.QuestionService;
@@ -33,6 +36,9 @@ public class QuestionController {
 
     @Autowired
     QuestionService questionService;
+
+    @Autowired
+    EventProducer eventProducer;
 
     @RequestMapping(path = {"/question/list"},method = {RequestMethod.POST})
     @ResponseBody
@@ -89,6 +95,14 @@ public class QuestionController {
         question.setCreatedDate(new Date());
         question.setCommentCount(0);
         if(questionService.addQuestion(question) > 0){
+
+            EventModel eventModel = new EventModel();
+            eventModel.setActorId(userId)
+                    .setEntityId(question.getId())
+                    .setEntityType(1)
+                    .setEntityOwnerId(question.getUserId())
+                    .setType(EventType.QUESTION);
+            eventProducer.fireEvent(eventModel);
             map.put("msg","问题添加成功");
             return JsonUtil.getJSONString(0, map);
         }
