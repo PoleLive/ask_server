@@ -20,11 +20,6 @@ public class FeedService {
     UserService userService;
     public List<Feed> getUsersFeeds(int maxId, List<Integer> userIds, int count){
         List<Feed> ans = feedDAO.selectUserFeeds(maxId,userIds,count);
-        for(Feed f : ans){
-            User u = userService.getUser(f.getUserId());
-            f.setName(u.getName());
-            f.setHeadUrl(u.getHeadUrl());
-        }
         return ans;
     }
     public boolean addFeed(Feed feed){

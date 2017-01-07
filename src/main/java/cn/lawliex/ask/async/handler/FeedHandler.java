@@ -83,6 +83,7 @@ public class FeedHandler implements EventHandler {
         feed.setName(user.getName());
         feed.setHeadUrl(user.getHeadUrl());
         feed.setData(buildFeedData(eventModel));
+        feed.setEntityType(eventModel.getEntityType());
         if(feed.getData() == null){
             return ;
         }

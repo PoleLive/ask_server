@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.lawliex.ask.dao.FeedDAO">
     <sql id="table">feed</sql>
-    <sql id="selectFields">id, user_id, type, created_date, data
+    <sql id="selectFields">id, user_id, type, created_date, data, name, head_url, entity_type
     </sql>
     <select id="selectUserFeeds" resultType="cn.lawliex.ask.model.Feed">
         SELECT

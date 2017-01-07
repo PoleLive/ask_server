@@ -10,10 +10,10 @@ import java.util.List;
 @Mapper
 public interface FeedDAO {
     String TABLE_NAME = " feed ";
-    String INSERT_FIELDS = " user_id, type, created_date, data ";
+    String INSERT_FIELDS = " user_id, type, created_date, data, name, head_url, entity_type ";
     String SELECT_FIELDS = " id," + INSERT_FIELDS;
 
-    @Insert({"insert into feed(",INSERT_FIELDS,") values(#{userId},#{type},#{createdDate},#{data})"})
+    @Insert({"insert into feed(",INSERT_FIELDS,") values(#{userId},#{type},#{createdDate},#{data},#{name},#{headUrl},#{entityType})"})
     int addFeed(Feed feed);
 
     @Select({"select * from feed where user_id={userId} order by created_date desc"})

@@ -10,10 +10,7 @@ import cn.lawliex.ask.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +49,16 @@ public class UserInfoController {
         userInfo.setMotto("世界那么大，你不想去看看吗...");
         Map<String,Object> map = new HashMap<>();
         map.put("userInfo",userInfo);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0, map);
+    }
+    @RequestMapping(path = {"/user/update"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getUpdateInfo(@RequestParam("ticket")String ticket){
+        User user = userService.getUserByTicket(ticket);
+        Map<String,Object> map = new HashMap<>();
+
+        map.put("user",user);
         map.put("msg","success");
         return JsonUtil.getJSONString(0, map);
     }
