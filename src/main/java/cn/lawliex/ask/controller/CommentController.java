@@ -167,4 +167,15 @@ public class CommentController {
         return JsonUtil.getJSONString(-1, map);
     }
 
+
+    //获取所有回答
+    @RequestMapping(path = {"/answer/all"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getAllAnswers(){
+        List<Answer> answers = commentService.getAllAnswers();
+        Map<String,Object> map = new HashMap<>();
+        map.put("answers",answers);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0, map);
+    }
 }

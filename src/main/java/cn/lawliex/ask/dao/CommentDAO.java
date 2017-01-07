@@ -1,6 +1,7 @@
 package cn.lawliex.ask.dao;
 
 
+import cn.lawliex.ask.model.Answer;
 import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Question;
 import org.apache.ibatis.annotations.*;
@@ -34,6 +35,16 @@ public interface CommentDAO {
 
     @Select({"select c.*, head_url " , "from comment c left join user u on c.user_id = u.id where c.user_id=#{userId} and c.entity_type=1"})
     List<Comment> selectAnswerByUserId(int userId);
+
+    @Select({"select c.*, u.head_url, u.name author, q.title question_title, (select count(*) from comment cc where c.id = cc.entity_id and cc.entity_type = 2) comment_count" +
+            " from comment c left join user u on c.user_id = u.id left join question q on q.id = c.entity_id " +
+            "where c.entity_type = 1 and c.id = #{id} "})
+    Answer selectAnswerById(int id);
+
+    @Select({"select c.*, u.head_url, u.name author, q.title question_title, (select count(*) from comment cc where c.id = cc.entity_id and cc.entity_type = 2) comment_count" +
+            " from comment c left join user u on c.user_id = u.id left join question q on q.id = c.entity_id " +
+            "where c.entity_type = 1 order by id desc"})
+    List<Answer> selectAnswers();
 
     @Update({"update ", TABLE_NAME, " set status=#{status} where id=#{id}"})
     void updateStatus(@Param("id")int id,@Param("status")int status );

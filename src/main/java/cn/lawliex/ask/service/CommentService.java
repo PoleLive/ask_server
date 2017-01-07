@@ -22,58 +22,58 @@ public class CommentService {
     LikeService likeService;
     @Autowired
     QuestionService questionService;
-
+    //添加评论
     public int addComment(Comment comment){
         int res =   commentDAO.addComment(comment);
         if(res > 0 && comment.getEntityType() == 1){
-
             Question question = questionService.getQuestion(comment.getEntityId());
             question.setCommentCount(question.getCommentCount() + 1);
             questionService.updateCommentCount(question);
         }
         return res;
     }
+    //获取用户回答
     public List<Comment> getAnswerByUserId(int userId){
         return commentDAO.selectAnswerByUserId(userId);
     }
+    //获取某个回答
     public Comment getComment(int id){
         return commentDAO.selectById(id);
     }
+    //获取回答的评论列表
     public List<Comment> getAnswerComment(int answerId){
         return commentDAO.selectByEntityId(answerId,2);
     }
+    //获取问题的答案列表
     public List<Comment> getQuestionAnswer(int questionId){
         return commentDAO.selectByEntityId(questionId, 1);
     }
+    //获取回答的评论列表
     public List<Comment> getAnswerComment(int answerId, int offset, int limit){
         return  commentDAO.selectByEntityId(answerId, 2);
     }
+    //删除评论
     void deleteComment(Comment comment){
         commentDAO.updateStatus(comment.getId(),1);
     }
-
+    //计算评论数或回答数
     public int countByEntityId(int entityType, int entityId){
         return commentDAO.countByEntityId(entityType,entityId);
     }
+    //计算用户回答数
     public int countAnswerByUserId(int userId){
         return commentDAO.countAnswerByUserId(userId);
     }
+    //获取一个回答
     public Answer getAnswerById(int id){
-        Comment c = getComment(id);
-        Answer answer = new Answer();
-        answer.setId(c.getId());
-        answer.setUserId(c.getUserId());
-        answer.setEntityId(c.getEntityId());
-        answer.setEntityType(c.getEntityType());
-        answer.setStatus(c.getStatus());
-        answer.setContent(c.getContent());
-        answer.setAuthor(c.getAuthor());
-        answer.setCreatedDate(c.getCreatedDate());
-        answer.setQuestionTitle(c.getQuestionTitle());
-        answer.setHeadUrl(c.getHeadUrl());
+        Answer answer =commentDAO.selectAnswerById(id);
         answer.setLikeCount((int) likeService.getLikeCount(2,answer.getId()));
-
-        answer.setCommentCount(countByEntityId(2,answer.getId()));
         return  answer;
+    }
+    public  List<Answer> getAllAnswers(){
+        List<Answer> answers = commentDAO.selectAnswers();
+        for (Answer a : answers)
+            a.setLikeCount((int) likeService.getLikeCount(2,a.getId()));
+        return answers;
     }
 }
