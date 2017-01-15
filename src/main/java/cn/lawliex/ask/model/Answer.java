@@ -1,11 +1,12 @@
 package cn.lawliex.ask.model;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * Created by Terence on 2016/12/31.
  */
-public class Answer {
+public class Answer{
     private int id;
     private int userId;
     private int entityType;
@@ -114,4 +115,5 @@ public class Answer {
     public void setContent(String content) {
         this.content = content;
     }
+
 }
