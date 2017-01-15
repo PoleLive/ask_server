@@ -10,6 +10,7 @@ public class Message
     int id;
     int fromId;
     int toId;
+    int type;
     String content;
     Date createdDate;
     int hasRead;
@@ -19,6 +20,14 @@ public class Message
     String fromUrl;
     String toUrl;
     int unReadCount;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public int getUnReadCount() {
         return unReadCount;

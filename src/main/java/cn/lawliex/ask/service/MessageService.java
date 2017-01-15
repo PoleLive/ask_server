@@ -6,6 +6,7 @@ import cn.lawliex.ask.model.Comment;
 import cn.lawliex.ask.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,12 @@ public class MessageService {
     @Autowired
     MessageDAO messageDAO;
 
+    @Autowired
+    SensitiveService sensitiveService;
+
     public int addMessage(Message message){
+        message.setContent(HtmlUtils.htmlEscape(message.getContent()));
+        message.setContent(sensitiveService.filter(message.getContent()));
         return messageDAO.addMessage(message);
     }
     public Message getMessageById(int id){

@@ -2,6 +2,7 @@ package cn.lawliex.ask.controller;
 import cn.lawliex.ask.model.User;
 import cn.lawliex.ask.service.UserService;
 import cn.lawliex.ask.util.JsonUtil;
+import org.aspectj.apache.bcel.util.ClassLoaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +30,7 @@ import java.util.stream.Collectors;
 public class UploadFileController {
 
     public static final String ROOT = "upload_dir";
-
+    public static final String IMG = "img_tmp_dir";
     private final ResourceLoader resourceLoader;
 
     @Autowired
@@ -50,7 +56,16 @@ public class UploadFileController {
             return ResponseEntity.notFound().build();
         }
     }
+    @RequestMapping(method = RequestMethod.GET, value = "/msgimg/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<?> getMsgImg(@PathVariable String filename) {
 
+        try {
+            return ResponseEntity.ok(resourceLoader.getResource("file:" + Paths.get(IMG, filename).toString()));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/upload")
     @ResponseBody
@@ -84,7 +99,39 @@ public class UploadFileController {
 
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/sendimg")
+    @ResponseBody
+    public String handleImgMsg(@RequestParam("file") MultipartFile file,@RequestParam("ticket")String ticket) {
+        if (!file.isEmpty()) {
+            try {
+                File dir = new File(IMG);
+                if(dir.exists()== false){
+                    dir.mkdir();
+                }
+                User user = userService.getUserByTicket(ticket);
+                //Files.copy(file.getInputStream(), Paths.get(ROOT, file.getOriginalFilename()));
+                String fileName = file.getOriginalFilename();
+                Date date = new Date();
+                String tmpFile = date.getTime()+ UUID.randomUUID().toString().substring(0,5) + "." + fileName.substring(fileName.indexOf(".") + 1);
 
+                File tmp = new File(IMG,tmpFile);
+                if(tmp.exists()){
+                    tmp.delete();
+                }
+                Files.copy(file.getInputStream(), Paths.get(IMG, tmpFile));
+                Map<String,Object> map = new HashMap<>();
+                map.put("img",tmpFile);
+                map.put("msg","Image is successfully uploaded");
+                return JsonUtil.getJSONString(0,map);
+
+            } catch (IOException|RuntimeException e) {
+                return JsonUtil.getJSONString(0,"Failued to upload " + file.getOriginalFilename() + " => " + e.getMessage());
+            }
+        } else {
+            return JsonUtil.getJSONString(0,"Failed to upload " + file.getOriginalFilename() + " because it was empty");
+        }
+
+    }
 
 
     @RequestMapping(path = {"uploadddd"}, method = {RequestMethod.POST})

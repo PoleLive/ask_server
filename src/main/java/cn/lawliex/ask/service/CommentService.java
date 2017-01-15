@@ -8,6 +8,7 @@ import cn.lawliex.ask.model.Question;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -22,8 +23,14 @@ public class CommentService {
     LikeService likeService;
     @Autowired
     QuestionService questionService;
+
+    @Autowired
+    SensitiveService sensitiveService;
     //添加评论
     public int addComment(Comment comment){
+        comment.setContent(HtmlUtils.htmlEscape(comment.getContent()));
+        comment.setContent(sensitiveService.filter(comment.getContent()));
+
         int res =   commentDAO.addComment(comment);
         if(res > 0 && comment.getEntityType() == 1){
             Question question = questionService.getQuestion(comment.getEntityId());

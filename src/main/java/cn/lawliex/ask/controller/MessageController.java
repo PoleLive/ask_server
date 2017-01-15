@@ -28,13 +28,14 @@ public class MessageController {
     UserService userService;
     @RequestMapping(path = {"/message/add"},method = {RequestMethod.POST})
     @ResponseBody
-    public String addMessage(@RequestParam("toId") int toId,@RequestParam("content")String content,@RequestParam("ticket")String ticket){
+    public String addMessage(@RequestParam("toId") int toId,@RequestParam("content")String content,@RequestParam("ticket")String ticket,@RequestParam("type")int type){
         User user = userService.getUserByTicket(ticket);
         int fromId = user.getId();
         Message message = new Message();
         message.setFromId(fromId);
         message.setToId(toId);
         message.setContent(content);
+        message.setType(type);
         String conversationId = "";
         if(fromId > toId)
             conversationId = toId+"_"+fromId;

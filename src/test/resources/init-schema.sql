@@ -8,6 +8,7 @@ CREATE TABLE `question` (
   `comment_count` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `date_index` (`created_date` ASC));
+  ALTER TABLE `ask`.`question`
   ADD COLUMN `like_count` INT ZEROFILL NULL AFTER `comment_count`;
   DROP TABLE IF EXISTS `user`;
   CREATE TABLE `user` (
@@ -58,7 +59,8 @@ CREATE TABLE `question` (
     INDEX `created_date` (`created_date` ASC))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
-
+  ALTER TABLE `ask`.`message`
+  ADD COLUMN `type` INT NULL DEFAULT 0 AFTER `conversation_id`;
   DROP TABLE IF EXISTS `feed`;
   CREATE TABLE `feed` (
     `id` INT NOT NULL AUTO_INCREMENT,

@@ -14,11 +14,11 @@ import java.util.List;
 @Mapper
 public interface MessageDAO {
     String TABLE_NAME = " message ";
-    String INSERT_FIELDS = " from_id, to_id, created_date, content, has_read, conversation_id ";
+    String INSERT_FIELDS = " from_id, to_id, created_date, content, has_read, conversation_id,type ";
     String SELECT_FIELDS = " id," + INSERT_FIELDS;
 
     @Insert({"insert into",TABLE_NAME,"(",INSERT_FIELDS,") values(" +
-            "#{fromId}, #{toId}, #{createdDate}, #{content}, #{hasRead},#{conversationId})"})
+            "#{fromId}, #{toId}, #{createdDate}, #{content}, #{hasRead},#{conversationId},#{type})"})
     int addMessage(Message message);
 
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
