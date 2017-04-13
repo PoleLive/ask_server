@@ -76,3 +76,10 @@ ALTER TABLE `ask`.`feed`
 ADD COLUMN `name` TINYTEXT NULL AFTER `type`,
 ADD COLUMN `head_url` VARCHAR(256) NULL AFTER `name`,
 ADD COLUMN `entity_type` INT NULL AFTER `head_url`;
+ALTER TABLE `ask`.`feed`
+ADD COLUMN `entity_id` INT(11) NULL AFTER `entity_type`;
+ALTER TABLE `ask`.`user`
+ADD COLUMN `nick_name` VARCHAR(45) NULL AFTER `head_url`;
+ALTER TABLE `ask`.`question`
+CHANGE COLUMN `like_count` `like_count` INT(11) UNSIGNED ZEROFILL NULL DEFAULT NULL ,
+ADD COLUMN `status` INT(11) NULL AFTER `like_count`;

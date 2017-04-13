@@ -15,6 +15,15 @@ public class Feed {
     private String name;
     private String headUrl;
     private int entityType;
+    private int entityId;
+
+    public int getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
+    }
 
     public int getEntityType() {
         return entityType;

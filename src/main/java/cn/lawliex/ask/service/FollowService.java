@@ -20,6 +20,11 @@ public class FollowService {
     @Autowired
     JedisAdapter jedisAdapter;
 
+    public Long getFollowCount(int entityType, int entityId){
+        String followKey = RedisKeyUtil.getFollowerKey(entityType,entityId);
+        return jedisAdapter.scard(followKey);
+    }
+
     public boolean follow(int userId,int entityType, int entityId){
         String key1 = RedisKeyUtil.getFollowerKey(entityType, entityId);
         String key2 = RedisKeyUtil.getFolloweeKey(userId, entityType);

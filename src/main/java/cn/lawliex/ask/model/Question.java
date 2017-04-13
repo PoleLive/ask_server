@@ -15,6 +15,15 @@ public class Question {
     private String name;
     private int likeCount;
     private String headUrl;
+    private int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public String getHeadUrl() {
         return headUrl;

@@ -68,7 +68,7 @@ public class CommentController {
             Answer answer = commentService.getAnswerById(c.getId());
             answers.add(answer);
         }
-        map.put("datas",answers);
+        map.put("answers",answers);
         map.put("msg","获取成功");
         return JsonUtil.getJSONString(0, map);
     }

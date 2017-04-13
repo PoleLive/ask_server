@@ -5,6 +5,7 @@ import cn.lawliex.ask.async.EventProducer;
 import cn.lawliex.ask.async.EventType;
 import cn.lawliex.ask.model.Question;
 import cn.lawliex.ask.model.User;
+import cn.lawliex.ask.service.FollowService;
 import cn.lawliex.ask.service.QuestionService;
 import cn.lawliex.ask.service.UserService;
 import cn.lawliex.ask.util.JsonUtil;
@@ -40,6 +41,8 @@ public class QuestionController {
     @Autowired
     EventProducer eventProducer;
 
+    @Autowired
+    FollowService followService;
     @RequestMapping(path = {"/question/list"},method = {RequestMethod.POST})
     @ResponseBody
     public String getQuestionList(){
@@ -47,6 +50,21 @@ public class QuestionController {
         List<Question> questions = questionService.getQuestions(0, 10);
         for(Question q:questions){
             q.setHeadUrl(userService.getUser(q.getUserId()).getHeadUrl());
+            q.setLikeCount((int) followService.getFollowerCount(1,q.getId()));
+        }
+        map.put("questions",questions);
+        map.put("msg","获取成功");
+        return JsonUtil.getJSONString(0, map);
+    }
+
+    @RequestMapping(path = {"/question/adminlist"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getQuestionAdminList(){
+        Map<String, Object> map = new HashMap<>();
+        List<Question> questions = questionService.getAdminQuestions(0, 10);
+        for(Question q:questions){
+            q.setHeadUrl(userService.getUser(q.getUserId()).getHeadUrl());
+            q.setLikeCount((int) followService.getFollowerCount(1,q.getId()));
         }
         map.put("questions",questions);
         map.put("msg","获取成功");
@@ -66,12 +84,44 @@ public class QuestionController {
         return JsonUtil.getJSONString(0, map);
     }
 
+    @RequestMapping(path = {"/question/delete"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String deleteQuestion(@RequestParam("id") int id){
+        Question question = questionService.getQuestion(id);
+        Map<String,Object> map = new HashMap<>();
+        question.setLikeCount((int)followService.getFollowerCount(1, question.getId()));
+        question.setStatus(1);
+        if(question != null){
+            questionService.updateQuestionStatus(question);
+            map.put("msg","success");
+            return  JsonUtil.getJSONString(0, map);
+
+        }
+        return JsonUtil.getJSONString(-1,"error");
+    }
+
+    @RequestMapping(path = {"/question/canceldelete"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String canceldeleteQuestion(@RequestParam("id") int id){
+        Question question = questionService.getQuestion(id);
+        Map<String,Object> map = new HashMap<>();
+        question.setLikeCount((int)followService.getFollowerCount(1, question.getId()));
+        question.setStatus(0);
+        if(question != null ){
+            questionService.updateQuestionStatus(question);
+            map.put("msg","success");
+            return  JsonUtil.getJSONString(0, map);
+
+        }
+        return JsonUtil.getJSONString(-1,"error");
+    }
+
     @RequestMapping(path = {"/question/detail"},method = {RequestMethod.POST})
     @ResponseBody
     public String getQuestion(@RequestParam("id")int id){
         Question question = questionService.getQuestion(id);
         Map<String,Object> map = new HashMap<>();
-
+        question.setLikeCount((int) followService.getFollowerCount(1,question.getId()));
         if(question != null){
             map.put("msg","success");
             map.put("data",question);

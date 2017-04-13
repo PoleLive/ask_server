@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -81,6 +82,7 @@ public class CommentService {
     }
     public  List<Answer> getAllAnswers(){
         List<Answer> answers = commentDAO.selectAnswers();
+
         Answer[] tmp = new Answer[answers.size()];
         for(int i = 0; i < tmp.length; i++) {
             answers.get(i).setLikeCount((int) likeService.getLikeCount(2,answers.get(i).getId()));
@@ -98,7 +100,18 @@ public class CommentService {
                 return 0;
             }
         });
+        ArrayList<Answer> ans = new ArrayList<>();
+        for(int  i = 0; i < tmp.length;i++)
+            ans.add(tmp[i]);
 
-        return Arrays.asList(tmp);
+        for(int i = ans.size() - 1 ; i >= 0; i--){
+            Answer a = ans.get(i);
+            if(a.getEntityType() == 1 ){
+                Question q = questionService.getQuestion(a.getEntityId());
+                if(q == null || q.getStatus() != 0)
+                    ans.remove(i);
+            }
+        }
+        return ans;
     }
 }

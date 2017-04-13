@@ -46,6 +46,9 @@ public class QuestionService {
     public List<Question> getQuestions(int offset, int limit){
         return questionDAO.selectQuestions();
     }
+    public List<Question> getAdminQuestions(int offset, int limit){
+        return questionDAO.selectAdminQuestions();
+    }
     public void updateLikeCount(Question question){
         questionDAO.updateLikeCount(question);
     }
@@ -55,4 +58,8 @@ public class QuestionService {
     public int getUserQuestionCount(int userId){
         return questionDAO.countUserQuestion(userId);
     }
+    public void updateQuestionStatus(Question question){
+        questionDAO.updateQuestionStatus(question);
+    }
+
 }
