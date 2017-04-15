@@ -54,6 +54,12 @@ public class CommentService {
     public List<Comment> getAnswerComment(int answerId){
         return commentDAO.selectByEntityId(answerId,2);
     }
+
+    //获取回答的评论列表
+    public List<Comment> getAnswerComment(){
+        return commentDAO.selectComments(2);
+    }
+
     //获取问题的答案列表
     public List<Comment> getQuestionAnswer(int questionId){
         return commentDAO.selectByEntityId(questionId, 1);

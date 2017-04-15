@@ -166,7 +166,16 @@ public class CommentController {
         map.put("msg","回答添加失败");
         return JsonUtil.getJSONString(-1, map);
     }
-
+    //获取所有回答
+    @RequestMapping(path = {"/comment/all"},method = {RequestMethod.POST})
+    @ResponseBody
+    public String getAllComment(){
+        List<Comment> comments = commentService.getAnswerComment();
+        Map<String,Object> map = new HashMap<>();
+        map.put("comments",comments);
+        map.put("msg","success");
+        return JsonUtil.getJSONString(0, map);
+    }
 
     //获取所有回答
     @RequestMapping(path = {"/answer/all"},method = {RequestMethod.POST})

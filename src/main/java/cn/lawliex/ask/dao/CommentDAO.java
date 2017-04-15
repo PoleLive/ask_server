@@ -27,6 +27,10 @@ public interface CommentDAO {
     Comment selectById(int id);
 
     @Select({"select c.*, u.name author,head_url from comment c " +
+            "left join user u on c.user_id = u.id where entity_type=#{entityType} order by id desc"})
+    List<Comment> selectComments(@Param("entityType")int entityType);
+
+    @Select({"select c.*, u.name author,head_url from comment c " +
             "left join user u on c.user_id = u.id where entity_Id=#{entityId} and entity_type=#{entityType} order by id desc"})
     List<Comment> selectByEntityId(@Param("entityId") int entityId, @Param("entityType")int entityType);
 
